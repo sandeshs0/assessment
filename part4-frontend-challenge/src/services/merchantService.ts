@@ -6,7 +6,7 @@ import type {
     MerchantStats,
     Transaction
 } from '../types/merchant';
-import { del, get, post, put } from './api';
+import { patch, get, post, put } from './api';
 
 export const merchantService = {
   
@@ -52,7 +52,7 @@ export const merchantService = {
   },
 
 
-  async deleteMerchant(memberId: string): Promise<void> {
-    return del<void>(`/merchants/${memberId}`);
+  async deactivateMerchant(memberId: string): Promise<void> {
+    return patch<void>(`/merchants/${memberId}`);
   },
 };

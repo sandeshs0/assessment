@@ -1,20 +1,17 @@
-package com.payment.service;
-
+package com.payment.service.impl;
 import com.payment.dto.TransactionResponse;
 import com.payment.entity.TransactionDetail;
 import com.payment.entity.TransactionMaster;
 import com.payment.exception.NotFoundException;
-import com.payment.repository.MemberRepository;
-import com.payment.repository.TransactionRepository;
 import com.payment.repository.TransactionDetailRepository;
-import com.vladsch.flexmark.ext.ins.Ins;
+import com.payment.repository.TransactionRepository;
+import com.payment.service.TransactionService;
 import io.micronaut.data.model.Page;
 import io.micronaut.data.model.Pageable;
 import jakarta.inject.Singleton;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -39,10 +36,10 @@ public class TransactionServiceImpl implements TransactionService {
             int page,
             int size
     ) {
-//        Validation: Checking if the member exists
+        //        Validation: Checking if the member exists
         validateMerchant(merchantId);
 
-//        Validatation: Checking if the Date range is valid
+        //        Validatation: Checking if the Date range is valid
         validateDateRange(startDate, endDate);
 
         Pageable pageable = Pageable.from(page, size);
@@ -54,25 +51,25 @@ public class TransactionServiceImpl implements TransactionService {
                 pageable
         );
 
-//        Building the response
+        //        Building the response
         TransactionResponse response = new TransactionResponse();
         response.setMerchantId(merchantId);
 
         TransactionResponse.DateRange dateRange = new TransactionResponse.DateRange(startDate, endDate);
         response.setDateRange(dateRange);
 
-//        Setting transactions to the response
-        List<TransactionResponse.Transaction>transactionDTOs= transactionPage.getContent()
+        //        Setting transactions to the response
+        List<TransactionResponse.Transaction> transactionDTOs= transactionPage.getContent()
                 .stream()
                 .map(this::mapToTransactionDTO)
                 .collect(Collectors.toList());
         response.setTransactions(transactionDTOs);
 
-//        Setting summary
+        //        Setting summary
         TransactionResponse.Summary summary = calcSummary(merchantId, startDate, endDate);
         response.setSummary(summary);
 
-//        Seting pagination DTO
+        //        Seting pagination DTO
         TransactionResponse.Pagination pagination = new TransactionResponse.Pagination(
                 page,
                 size,
@@ -112,7 +109,7 @@ public class TransactionServiceImpl implements TransactionService {
         dto.setCardLast4(master.getCardLast4());
         dto.setCardType(master.getCardType());
 
-//        Transaction Details
+        //        Transaction Details
         List<TransactionDetail> details = transactionDetailRepository.findByMasterTxnId(master.getTxnId());
         List<TransactionResponse.Detail> detailDto = details.stream().map(this::mapToDetailDto).collect(Collectors.toList());
         dto.setDetails(detailDto);
@@ -120,7 +117,7 @@ public class TransactionServiceImpl implements TransactionService {
         return dto;
     }
 
-//    Helper to map transactionDetail to detail dto
+    //    Helper to map transactionDetail to detail dto
     private TransactionResponse.Detail mapToDetailDto(TransactionDetail detail) {
         TransactionResponse.Detail dto = new TransactionResponse.Detail();
         dto.setType(detail.getDetailType());
@@ -129,24 +126,24 @@ public class TransactionServiceImpl implements TransactionService {
         return dto;
     }
 
-//    Helper to calculate summary
+    //    Helper to calculate summary
     private TransactionResponse.Summary calcSummary(String merchantId, Instant startDate, Instant endDate) {
         TransactionResponse.Summary summary = new TransactionResponse.Summary();
-//        Fetching transactions for the date range
+        //        Fetching transactions for the date range
         List<TransactionMaster> allTransactions= transactionRepository.findByMerchantIdAndLocalTxnDateTimeBetween(merchantId,startDate,endDate);
 
-//        Total Count
+        //        Total Count
         summary.setTotalTransactions(allTransactions.size());
 
-//        For Total Amount
+        //        For Total Amount
         BigDecimal totalAmount = allTransactions.stream().map(TransactionMaster::getAmount).filter(Objects::nonNull).reduce(BigDecimal.ZERO,BigDecimal::add);
         summary.setTotalAmount(totalAmount);
 
-//        Currency
+        //        Currency
         String currency = allTransactions.get(0).getCurrency();
         summary.setCurrency(currency);
 
-//        Status Stats
+        //        Status Stats
         List<TransactionRepository.StatusCount> statusCounts = transactionRepository.countByStatus(merchantId,startDate,endDate);
         Map<String, Integer> byStatus = statusCounts.stream().collect(Collectors.toMap(
                 TransactionRepository.StatusCount::getStatus,
@@ -157,4 +154,3 @@ public class TransactionServiceImpl implements TransactionService {
         return summary;
     }
 }
-

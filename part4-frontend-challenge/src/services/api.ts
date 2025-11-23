@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from 'axios';
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1';
 const API_TIMEOUT = parseInt(import.meta.env.VITE_API_TIMEOUT || '30000');
@@ -89,4 +89,7 @@ export const del = <T>(url: string, config?: AxiosRequestConfig): Promise<T> => 
   return apiClient.delete<T>(url, config).then((response) => response.data);
 };
 
+export const patch = <T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> => {
+  return apiClient.patch<T>(url, data, config).then((response) => response.data);
+}
 export default apiClient;

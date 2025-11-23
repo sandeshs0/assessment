@@ -1,9 +1,10 @@
-import { Routes, Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
+import './App.css';
 import { Header } from './components/layout/Header';
-import { Transactions } from './pages/Transactions';
+import { MerchantDetails } from './pages/MerchantDetails';
 import { Merchants } from './pages/Merchants';
 import { Reports } from './pages/Reports';
-import './App.css';
+import { Transactions } from './pages/Transactions';
 
 /**
  * Main Application Component
@@ -29,6 +30,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Transactions />} />
         <Route path="/merchants" element={<Merchants />} />
+        <Route path="/merchants/:id" element={<MerchantDetails />} />
         <Route path="/reports" element={<Reports />} />
       </Routes>
     </div>

@@ -9,7 +9,7 @@ interface UseMerchantMutationsResult {
   error: Error | null;
   createMerchant: (data: MerchantFormData) => Promise<Merchant | null>;
   updateMerchant: (memberId: string, data: Partial<MerchantFormData>) => Promise<Merchant | null>;
-  deleteMerchant: (memberId: string) => Promise<boolean>;
+  deactivateMerchant: (memberId: string) => Promise<boolean>;
 }
 
 export const useMerchantMutations = (): UseMerchantMutationsResult => {
@@ -51,11 +51,11 @@ export const useMerchantMutations = (): UseMerchantMutationsResult => {
     }
   };
 
-  const deleteMerchant = async (memberId: string): Promise<boolean> => {
+  const deactivateMerchant = async (memberId: string): Promise<boolean> => {
     try {
       setDeleting(true);
       setError(null);
-      await merchantService.deleteMerchant(memberId);
+      await merchantService.deactivateMerchant(memberId);
       return true;
     } catch (err) {
       setError(err as Error);
@@ -73,6 +73,6 @@ export const useMerchantMutations = (): UseMerchantMutationsResult => {
     error,
     createMerchant,
     updateMerchant,
-    deleteMerchant,
+    deactivateMerchant,
   };
 };

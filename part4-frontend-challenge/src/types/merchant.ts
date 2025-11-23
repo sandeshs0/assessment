@@ -1,8 +1,8 @@
 export interface Merchant {
   memberId: string;
   memberName: string;
-  memberType: 'ACQUIRER' | 'ISSUER' | 'BOTH';
-  status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
+  memberType: 'acquirer' | 'issuer' | 'both';
+  status: 'active' | 'inactive' | 'suspended';
   address?: string;
   country?: string;
   createdAt: string;
@@ -18,9 +18,9 @@ export interface MerchantStats {
 
 export interface MerchantFormData {
   memberName: string;
-  memberType: 'ACQUIRER' | 'ISSUER' | 'BOTH';
-  address: string;
-  country: string;
+  memberType: 'acquirer' | 'issuer' | 'both';
+  address?: string;
+  country?: string;
 }
 
 export interface MerchantFilters {

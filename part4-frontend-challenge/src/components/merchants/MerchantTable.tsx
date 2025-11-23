@@ -1,11 +1,13 @@
 import type { Merchant } from '../../types/merchant';
+import { Ban } from 'lucide-react';
+import {PenSquare} from 'lucide-react'
 
 interface MerchantTableProps {
   merchants: Merchant[];
   loading: boolean;
   onView: (merchant: Merchant) => void;
   onEdit: (merchant: Merchant) => void;
-  onDelete: (merchant: Merchant) => void;
+  onDeactivate: (merchant: Merchant) => void;
 }
 
 export const MerchantTable = ({ 
@@ -13,7 +15,7 @@ export const MerchantTable = ({
   loading, 
   onView, 
   onEdit, 
-  onDelete 
+  onDeactivate 
 }: MerchantTableProps) => {
   if (loading) {
     return (
@@ -34,11 +36,11 @@ export const MerchantTable = ({
 
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
-      case 'ACTIVE':
+      case 'active':
         return 'bg-green-100 text-green-800';
-      case 'INACTIVE':
+      case 'inactive':
         return 'bg-gray-100 text-gray-800';
-      case 'SUSPENDED':
+      case 'suspended':
         return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
@@ -123,15 +125,15 @@ export const MerchantTable = ({
                 </button>
                 <button
                   onClick={() => onEdit(merchant)}
-                  className="text-indigo-600 hover:text-indigo-900 mr-3"
+                  className="text-black-600 hover:text-indigo-900 mr-3"
                 >
-                  Edit
+                 <PenSquare className="inline-block w-4 h-4" />
                 </button>
                 <button
-                  onClick={() => onDelete(merchant)}
-                  className="text-red-600 hover:text-red-900"
+                  onClick={() => onDeactivate(merchant)}
+                  className="text-red-400 hover:text-red-900"
                 >
-                  Delete
+                  <Ban className="inline-block w-4 h-4" />
                 </button>
               </td>
             </tr>

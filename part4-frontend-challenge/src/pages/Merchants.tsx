@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Modal } from '../components/common/Modal';
 import { Pagination } from '../components/common/Pagination';
 import { MerchantFilters } from '../components/merchants/MerchantFilters';
+import { MerchantForm } from '../components/merchants/MerchantForm';
 import { MerchantTable } from '../components/merchants/MerchantTable';
 import { useMerchantMutations } from '../hooks/useMerchantMutations';
 import { useMerchants } from '../hooks/useMerchants';
-import type { MerchantFilters as FilterType, Merchant } from '../types/merchant';
+import type { MerchantFilters as FilterType, Merchant, MerchantFormData } from '../types/merchant';
 import './Merchants.css';
 
 export const Merchants = () => {
@@ -16,9 +18,12 @@ export const Merchants = () => {
     sortBy: 'createdAt',
     sortOrder: 'desc'
   });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingMerchant, setEditingMerchant] = useState<Merchant | null>(null);
+  const [deactivatingMerchant, setDeactivatingMerchant] = useState<Merchant | null>(null);
 
   const { data, loading, error, refetch } = useMerchants(filters);
-  const { deleting, deleteMerchant } = useMerchantMutations();
+  const { creating, updating, deleting, createMerchant, updateMerchant, deactivateMerchant } = useMerchantMutations();
 
   const handleFilterChange = (newFilters: Partial<FilterType>) => {
     setFilters(prev => ({ ...prev, ...newFilters, page: 1 }));
@@ -46,22 +51,53 @@ export const Merchants = () => {
   };
 
   const handleEdit = (merchant: Merchant) => {
-    navigate(`/merchants/${merchant.memberId}/edit`);
+    setEditingMerchant(merchant);
+    setIsModalOpen(true);
   };
 
-  const handleDelete = async (merchant: Merchant) => {
-    if (window.confirm(`Are you sure you want to delete merchant "${merchant.memberName}"?`)) {
-      try {
-        await deleteMerchant(merchant.memberId);
-        refetch();
-      } catch (err) {
-        console.error('Failed to delete merchant:', err);
-      }
+  const handleDeactivate = async (merchant: Merchant) => {
+    setDeactivatingMerchant(merchant);
+  };
+
+  const handleConfirmDeactivate = async () => {
+    if (!deactivatingMerchant) return;
+    
+    try {
+      await deactivateMerchant(deactivatingMerchant.memberId);
+      setDeactivatingMerchant(null);
+      refetch();
+    } catch (err) {
+      console.error('Failed to deactivate merchant:', err);
     }
   };
 
+  const handleCancelDeactivate = () => {
+    setDeactivatingMerchant(null);
+  };
+
   const handleAddNew = () => {
-    navigate('/merchants/new');
+    setEditingMerchant(null);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingMerchant(null);
+  };
+
+  const handleFormSubmit = async (formData: MerchantFormData) => {
+    try {
+      if (editingMerchant) {
+        await updateMerchant(editingMerchant.memberId, formData);
+      } else {
+        await createMerchant(formData);
+      }
+      handleCloseModal();
+      refetch();
+    } catch (err) {
+      console.error('Failed to save merchant:', err);
+      throw err;
+    }
   };
 
   return (
@@ -97,7 +133,7 @@ export const Merchants = () => {
         loading={loading || deleting}
         onView={handleView}
         onEdit={handleEdit}
-        onDelete={handleDelete}
+        onDeactivate={handleDeactivate}
       />
 
       {data && data.pagination.totalPages > 0 && (
@@ -110,6 +146,53 @@ export const Merchants = () => {
           onPageSizeChange={handlePageSizeChange}
         />
       )}
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        title={editingMerchant ? 'Edit Merchant' : 'Add New Merchant'}
+      >
+        <MerchantForm
+          initialData={editingMerchant ? {
+            memberName: editingMerchant.memberName,
+            memberType: editingMerchant.memberType,
+            country: editingMerchant.country
+          } : undefined}
+          onSubmit={handleFormSubmit}
+          onCancel={handleCloseModal}
+          isSubmitting={creating || updating}
+        />
+      </Modal>
+
+      <Modal
+        isOpen={!!deactivatingMerchant}
+        onClose={handleCancelDeactivate}
+        title="Confirm Deactivate Merchant?"
+      >
+        <div className="space-y-4">
+          <p className="text-gray-700">
+            Are you sure you want to deactivate merchant <strong>"{deactivatingMerchant?.memberName}"</strong>?
+          </p>
+          <div className="flex justify-end gap-3 pt-4">
+            <button
+              type="button"
+              onClick={handleCancelDeactivate}
+              disabled={deleting}
+              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleConfirmDeactivate}
+              disabled={deleting}
+              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {deleting ? 'Deactivating...' : 'Deactivate'}
+            </button>
+          </div>
+        </div>
+      </Modal>
     </main>
   );
 };

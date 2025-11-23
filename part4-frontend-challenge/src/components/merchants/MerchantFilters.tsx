@@ -45,9 +45,9 @@ export const MerchantFilters = ({ filters, onFilterChange, onClear }: MerchantFi
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
             >
               <option value="">All Types</option>
-              <option value="ACQUIRER">Acquirer</option>
-              <option value="ISSUER">Issuer</option>
-              <option value="BOTH">Both</option>
+              <option value="acquirer">Acquirer</option>
+              <option value="issuer">Issuer</option>
+              <option value="both">Both</option>
             </select>
           </div>
 
@@ -61,9 +61,9 @@ export const MerchantFilters = ({ filters, onFilterChange, onClear }: MerchantFi
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
             >
               <option value="">All Status</option>
-              <option value="ACTIVE">Active</option>
-              <option value="INACTIVE">Inactive</option>
-              <option value="SUSPENDED">Suspended</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+              <option value="suspended">Suspended</option>
             </select>
           </div>
 
