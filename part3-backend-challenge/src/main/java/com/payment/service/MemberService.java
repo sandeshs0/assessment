@@ -15,7 +15,7 @@ public interface MemberService {
 
     void deactivate(Long memberId);
 
-    MemberStatsResponse getStats(Long memberId);
+    MemberStatsResponse getStats(String memberCode);
 
-    MemberTransactionListResponse getTransactions(Long memberId, int page, int size);
+    MemberTransactionListResponse getTransactions(String memberCode, int page, int size);
 }

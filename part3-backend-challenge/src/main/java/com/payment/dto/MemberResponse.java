@@ -6,6 +6,7 @@ import io.micronaut.serde.annotation.Serdeable;
 public class MemberResponse {
 
     private String memberId;
+    private String memberCode;
     private String memberName;
     private String memberType;
     private String status;
@@ -15,6 +16,14 @@ public class MemberResponse {
 
     public String getMemberId() {
         return memberId;
+    }
+
+    public String getMemberCode() {
+        return memberCode;
+    }
+
+    public void setMemberCode(String memberCode) {
+        this.memberCode = memberCode;
     }
 
     public void setMemberId(String memberId) {

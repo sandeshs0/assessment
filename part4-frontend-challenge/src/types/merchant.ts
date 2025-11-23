@@ -1,6 +1,7 @@
 export interface Merchant {
   memberId: string;
   memberName: string;
+  memberCode: string;
   memberType: 'acquirer' | 'issuer' | 'both';
   status: 'active' | 'inactive' | 'suspended';
   address?: string;

@@ -63,17 +63,17 @@ public class MemberController {
     }
 
     @Get("/{memberId}/stats")
-    public HttpResponse<MemberStatsResponse> getStats(@PathVariable Long memberId) {
-        MemberStatsResponse stats = memberService.getStats(memberId);
+    public HttpResponse<MemberStatsResponse> getStats(@PathVariable String memberCode) {
+        MemberStatsResponse stats = memberService.getStats(memberCode);
         return HttpResponse.ok(stats);
     }
 
     @Get("/{memberId}/transactions")
     public HttpResponse<MemberTransactionListResponse> getTransactions(
-            @PathVariable Long memberId,
+            @PathVariable String memberCode,
             @QueryValue(defaultValue = "0") int page,
             @QueryValue(defaultValue = "10") int size) {
-        MemberTransactionListResponse response = memberService.getTransactions(memberId, page, size);
+        MemberTransactionListResponse response = memberService.getTransactions(memberCode, page, size);
         return HttpResponse.ok(response);
     }
 }

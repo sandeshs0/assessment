@@ -135,11 +135,11 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberStatsResponse getStats(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-            .orElseThrow(() -> new NotFoundException("Member not found with id: " + memberId));
+    public MemberStatsResponse getStats(String memberCode) {
+        Member member = memberRepository.findByMemberCode(memberCode)
+            .orElseThrow(() -> new NotFoundException("Member not found with member code: " + memberCode));
 
-        List<TransactionMaster> transactions = transactionRepository.findByMerchantId(String.valueOf(memberId));
+        List<TransactionMaster> transactions = transactionRepository.findByMerchantId(String.valueOf(memberCode));
 
         MemberStatsResponse stats = new MemberStatsResponse();
         stats.setTotalTransactions((long) transactions.size());
@@ -169,11 +169,11 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberTransactionListResponse getTransactions(Long memberId, int page, int size) {
-        Member member = memberRepository.findById(memberId)
-            .orElseThrow(() -> new NotFoundException("Member not found with id: " + memberId));
+    public MemberTransactionListResponse getTransactions(String memberCode, int page, int size) {
+        Member member = memberRepository.findByMemberCode(memberCode)
+            .orElseThrow(() -> new NotFoundException("Member not found with id: " + memberCode));
 
-        List<TransactionMaster> transactions = transactionRepository.findByMerchantId(String.valueOf(memberId));
+        List<TransactionMaster> transactions = transactionRepository.findByMerchantId(String.valueOf(memberCode));
 
         int start = page * size;
         int end = Math.min(start + size, transactions.size());
@@ -211,6 +211,7 @@ public class MemberServiceImpl implements MemberService {
     private MemberResponse mapToResponse(Member member) {
         MemberResponse response = new MemberResponse();
         response.setMemberId(String.valueOf(member.getMemberId()));
+        response.setMemberCode(member.getMemberCode());
         response.setMemberName(member.getMemberName());
         response.setMemberType(member.getMemberType());
         response.setStatus(member.getStatus());

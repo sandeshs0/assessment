@@ -75,7 +75,7 @@ export const MerchantTable = ({
         <thead className="bg-gray-50">
           <tr>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Member ID
+              Member Code
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Name
@@ -96,9 +96,9 @@ export const MerchantTable = ({
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
           {merchants.map((merchant) => (
-            <tr key={merchant.memberId} className="hover:bg-gray-50">
+            <tr key={merchant.memberCode} className="hover:bg-gray-50">
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                {merchant.memberId}
+                {merchant.memberCode}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                 {merchant.memberName}

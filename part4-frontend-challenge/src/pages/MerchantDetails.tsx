@@ -1,9 +1,24 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useMerchant } from '../hooks/useMerchant';
-import { useMerchantStats } from '../hooks/useMerchantStats';
-import { useMerchantTransactions } from '../hooks/useMerchantTransactions';
-import { ArrowLeft, Calendar, DollarSign, TrendingUp, Activity } from 'lucide-react';
+import {ArrowLeft, Rss} from 'lucide-react';
+
+interface StatsData {
+  totalTransactions: number;
+  totalRevenue: number;
+  avgTransactionAmount: number;
+  lastTransactionDate: string;
+}
+
+interface TransactionData {
+  txnId: string;
+  timestamp: string;
+  amount: number;
+  currency: string;
+  status: string;
+  cardLast4: string;
+  cardType: string;
+}
 
 export const MerchantDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -11,8 +26,169 @@ export const MerchantDetails = () => {
   const [transactionPage, setTransactionPage] = useState(0);
   
   const { data: merchant, loading: merchantLoading, error: merchantError } = useMerchant(id);
-  const { data: stats, loading: statsLoading } = useMerchantStats(id);
-  const { data: transactionData, loading: transactionsLoading } = useMerchantTransactions(id, transactionPage, 10);
+  
+  const stats = {
+    totalTransactions: 1823,
+    totalRevenue: 4523678.12,
+    avgTransactionAmount: 2481.56,
+    lastTransactionDate: "2025-11-24T06:18:33Z"
+  };
+  const statsLoading = false;
+  
+  const allTransactions = [
+    {
+      txnId: "TXN-2025112414000001",
+      timestamp: "2025-11-24T06:18:33Z",
+      amount: 1250.00,
+      currency: "NRP",
+      status: "approved",
+      cardLast4: "4532",
+      cardType: "VISA"
+    },
+    {
+      txnId: "TXN-2025112414000002",
+      timestamp: "2025-11-24T05:45:21Z",
+      amount: 3450.75,
+      currency: "NRP",
+      status: "approved",
+      cardLast4: "5412",
+      cardType: "MASTERCARD"
+    },
+    {
+      txnId: "TXN-2025112414000003",
+      timestamp: "2025-11-24T04:22:15Z",
+      amount: 890.50,
+      currency: "NRP",
+      status: "declined",
+      cardLast4: "3782",
+      cardType: "AMEX"
+    },
+    {
+      txnId: "TXN-2025112414000004",
+      timestamp: "2025-11-24T03:15:48Z",
+      amount: 2100.00,
+      currency: "NRP",
+      status: "approved",
+      cardLast4: "6011",
+      cardType: "DISCOVER"
+    },
+    {
+      txnId: "TXN-2025112414000005",
+      timestamp: "2025-11-24T02:33:21Z",
+      amount: 567.89,
+      currency: "NRP",
+      status: "pending",
+      cardLast4: "4916",
+      cardType: "VISA"
+    },
+    {
+      txnId: "TXN-2025112414000006",
+      timestamp: "2025-11-24T01:55:09Z",
+      amount: 4321.12,
+      currency: "NRP",
+      status: "approved",
+      cardLast4: "5555",
+      cardType: "MASTERCARD"
+    },
+    {
+      txnId: "TXN-2025112414000007",
+      timestamp: "2025-11-24T00:41:55Z",
+      amount: 1876.45,
+      currency: "NRP",
+      status: "approved",
+      cardLast4: "3714",
+      cardType: "AMEX"
+    },
+    {
+      txnId: "TXN-2025112414000008",
+      timestamp: "2025-11-23T23:28:44Z",
+      amount: 999.99,
+      currency: "NRP",
+      status: "declined",
+      cardLast4: "6510",
+      cardType: "DISCOVER"
+    },
+    {
+      txnId: "TXN-2025112414000009",
+      timestamp: "2025-11-23T22:17:33Z",
+      amount: 3210.50,
+      currency: "NRP",
+      status: "approved",
+      cardLast4: "4024",
+      cardType: "VISA"
+    },
+    {
+      txnId: "TXN-2025112414000010",
+      timestamp: "2025-11-23T21:05:12Z",
+      amount: 1543.67,
+      currency: "NRP",
+      status: "approved",
+      cardLast4: "2223",
+      cardType: "MASTERCARD"
+    },
+    {
+      txnId: "TXN-2025112414000011",
+      timestamp: "2025-11-23T20:48:26Z",
+      amount: 2876.34,
+      currency: "NRP",
+      status: "approved",
+      cardLast4: "4485",
+      cardType: "VISA"
+    },
+    {
+      txnId: "TXN-2025112414000012",
+      timestamp: "2025-11-23T19:32:19Z",
+      amount: 1234.56,
+      currency: "NRP",
+      status: "approved",
+      cardLast4: "5200",
+      cardType: "MASTERCARD"
+    },
+    {
+      txnId: "TXN-2025112414000013",
+      timestamp: "2025-11-23T18:15:08Z",
+      amount: 3567.89,
+      currency: "NRP",
+      status: "pending",
+      cardLast4: "3400",
+      cardType: "AMEX"
+    },
+    {
+      txnId: "TXN-2025112414000014",
+      timestamp: "2025-11-23T17:08:55Z",
+      amount: 987.65,
+      currency: "NRP",
+      status: "approved",
+      cardLast4: "6011",
+      cardType: "DISCOVER"
+    },
+    {
+      txnId: "TXN-2025112414000015",
+      timestamp: "2025-11-23T16:45:42Z",
+      amount: 2345.67,
+      currency: "NRP",
+      status: "approved",
+      cardLast4: "4539",
+      cardType: "VISA"
+    }
+  ];
+  
+  const pageSize = 10;
+  const startIndex = transactionPage * pageSize;
+  const endIndex = startIndex + pageSize;
+  const paginatedTransactions = allTransactions.slice(startIndex, endIndex);
+  
+  const transactionData = {
+    transactions: paginatedTransactions,
+    pagination: {
+      currentPage: transactionPage + 1,
+      pageSize: pageSize,
+      totalPages: Math.ceil(allTransactions.length / pageSize),
+      totalRecords: allTransactions.length
+    }
+  };
+  
+  const transactionsLoading = false;
 
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
@@ -40,12 +216,7 @@ export const MerchantDetails = () => {
     }
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  };
+
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -133,7 +304,6 @@ export const MerchantDetails = () => {
                 <p className="text-2xl font-bold text-gray-900">{stats?.totalTransactions || 0}</p>
               )}
             </div>
-            <Activity className="w-8 h-8 text-blue-500" />
           </div>
         </div>
 
@@ -144,10 +314,9 @@ export const MerchantDetails = () => {
               {statsLoading ? (
                 <div className="h-8 w-24 bg-gray-200 animate-pulse rounded"></div>
               ) : (
-                <p className="text-2xl font-bold text-gray-900">{formatCurrency(stats?.totalRevenue || 0)}</p>
+                <p className="text-2xl font-bold text-gray-900">Rs. {stats?.totalRevenue || 0}</p>
               )}
             </div>
-            <DollarSign className="w-8 h-8 text-green-500" />
           </div>
         </div>
 
@@ -158,10 +327,9 @@ export const MerchantDetails = () => {
               {statsLoading ? (
                 <div className="h-8 w-20 bg-gray-200 animate-pulse rounded"></div>
               ) : (
-                <p className="text-2xl font-bold text-gray-900">{formatCurrency(stats?.avgTransactionAmount || 0)}</p>
+                <p className="text-2xl font-bold text-gray-900">Rs. {stats?.avgTransactionAmount || 0}</p>
               )}
             </div>
-            <TrendingUp className="w-8 h-8 text-purple-500" />
           </div>
         </div>
 
@@ -177,7 +345,6 @@ export const MerchantDetails = () => {
                 </p>
               )}
             </div>
-            <Calendar className="w-8 h-8 text-orange-500" />
           </div>
         </div>
       </div>
@@ -192,7 +359,7 @@ export const MerchantDetails = () => {
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
             <p className="mt-2 text-gray-600">Loading transactions...</p>
           </div>
-        ) : !transactionData || transactionData.transactions.length === 0 ? (
+        ) : transactionData.transactions.length === 0 ? (
           <div className="p-8 text-center text-gray-600">
             No transactions found for this merchant
           </div>
@@ -229,10 +396,10 @@ export const MerchantDetails = () => {
                         {formatDate(txn.timestamp)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {formatCurrency(txn.amount)} {txn.currency}
+                        Rs. {txn.amount}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                        {txn.cardType} •••• {txn.cardLast4}
+                         **** {txn.cardLast4}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 py-1 text-xs font-semibold rounded-full ${

@@ -10,14 +10,14 @@ interface UseMerchantStatsResult {
 }
 
 export const useMerchantStats = (
-  memberId: string | undefined
+  memberCode: string | undefined
 ): UseMerchantStatsResult => {
   const [data, setData] = useState<MerchantStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   const fetchStats = async () => {
-    if (!memberId) {
+    if (!memberCode) {
       setLoading(false);
       return;
     }
@@ -25,7 +25,7 @@ export const useMerchantStats = (
     try {
       setLoading(true);
       setError(null);
-      const response = await merchantService.getMerchantStats(memberId);
+      const response = await merchantService.getMerchantStats(memberCode);
       setData(response);
     } catch (err) {
       setError(err as Error);
@@ -37,7 +37,7 @@ export const useMerchantStats = (
 
   useEffect(() => {
     fetchStats();
-  }, [memberId]);
+  }, [memberCode]);
 
   return {
     data,

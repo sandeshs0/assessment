@@ -18,7 +18,7 @@ interface UseMerchantTransactionsResult {
 }
 
 export const useMerchantTransactions = (
-  memberId: string | undefined,
+  memberCode: string | undefined,
   page = 0,
   size = 10
 ): UseMerchantTransactionsResult => {
@@ -27,7 +27,7 @@ export const useMerchantTransactions = (
   const [error, setError] = useState<Error | null>(null);
 
   const fetchTransactions = async () => {
-    if (!memberId) {
+    if (!memberCode) {
       setLoading(false);
       return;
     }
@@ -35,7 +35,7 @@ export const useMerchantTransactions = (
     try {
       setLoading(true);
       setError(null);
-      const response = await merchantService.getMerchantTransactions(memberId, page, size);
+      const response = await merchantService.getMerchantTransactions(memberCode, page, size);
       setData(response as any);
     } catch (err) {
       setError(err as Error);
@@ -47,7 +47,7 @@ export const useMerchantTransactions = (
 
   useEffect(() => {
     fetchTransactions();
-  }, [memberId, page, size]);
+  }, [memberCode, page, size]);
 
   return {
     data,
